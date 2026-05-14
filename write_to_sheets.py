@@ -73,6 +73,7 @@ def writeToSheets(data:dict[str, CategorySummary]):
         table_values.append([TOTAL, "",SUM_FORMULA])
         
         create_formatted_sheet(sheetsService, CATEGORY_SHEET_COLUMN_PROPERTIES, categoryName, 250)
+        print(table_values)
         sheetsService.writeToSheet(SPREADSHEET_ID, categoryName, table_values)
 
     # Do this last. Otherwise the REF's in the query will be null as they don't exist until all other sheets are created.

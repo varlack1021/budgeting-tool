@@ -37,7 +37,8 @@ def swap_leading_symbols(text: str) -> str:
         return "+" + text[1:]
     elif text[0] == "+":
         return "-" + text[1:]
-    return text
+    else:
+        return "-" + text
 
 def reCategorize(transactions:list[Transaction]):
     targets = (DESCIPTION_TO_CATEGORY).keys()
