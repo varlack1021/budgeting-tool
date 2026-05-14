@@ -40,6 +40,7 @@ def create_formatted_sheet(sheetsService: GoogleSheets, column_properties, sheet
         sheetsService.add_table(SPREADSHEET_ID, sheet_id, column_properties, sheet_name)
         sheetsService.adjust_column_width(SPREADSHEET_ID, sheet_id, 0, col_width)
     except SheetExistsError:
+        sheetsService.clearSheets(SPREADSHEET_ID, [sheet_name])
         pass
 
 
@@ -75,7 +76,6 @@ def writeToSheets(data:dict[str, CategorySummary]):
         sheetsService.writeToSheet(SPREADSHEET_ID, categoryName, table_values)
 
     # Do this last. Otherwise the REF's in the query will be null as they don't exist until all other sheets are created.
-    print(summary_table_values)
     sheetsService.writeToSheet(SPREADSHEET_ID, "Summary", summary_table_values)
 
     

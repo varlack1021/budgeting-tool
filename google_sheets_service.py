@@ -22,7 +22,17 @@ class GoogleSheets:
         )
 
         self.service = build("sheets", "v4", credentials=creds).spreadsheets()
-    
+    def clearSheets(self, spreadsheet_id, sheets: list[str]):
+        tabs_to_reset = sheets
+
+        request_body = {
+            "ranges": tabs_to_reset
+        }
+
+        self.service.values().batchClear(
+            spreadsheetId=spreadsheet_id,
+            body=request_body
+        ).execute()
     def create_new_sheet(self, spreadsheet_id, sheet_name) -> str:
         batch_update_request = {
             "requests": [
@@ -70,6 +80,7 @@ class GoogleSheets:
     def add_table(self, spreadsheet_id, sheet_id, column_properties: list[ColumnProperty], table_name):
         requests = [
     {
+    # Create table
         "addTable": {
             "table": {
                 "name": table_name,
@@ -84,6 +95,7 @@ class GoogleSheets:
             }
         },
     },
+    # Center align items
     {
         "repeatCell": {
             "range": {
@@ -98,7 +110,26 @@ class GoogleSheets:
             },
             "fields": "userEnteredFormat.horizontalAlignment"
             }
+        },
+    # Format amount col as number. Requieres amount col to be last col.
+    {
+        "repeatCell": {
+            "range": {
+                "sheetId": sheet_id,
+                "startColumnIndex": len(column_properties)-1,
+                "endColumnIndex": len(column_properties)
+            },
+            "cell": {
+                "userEnteredFormat": {
+                    "numberFormat": {
+                        "type": "NUMBER",
+                        "pattern": "#,##0.00"
+                    }
+                }
+            },
+            "fields": "userEnteredFormat.numberFormat"
         }
+    }
     ]
         self.service.batchUpdate(
     spreadsheetId=spreadsheet_id,
@@ -134,3 +165,4 @@ class GoogleSheets:
             valueInputOption="USER_ENTERED",
             body={"values": table_values}
         ).execute()
+    
