@@ -2,12 +2,22 @@
 from datetime import datetime, date
 import csv
 from type_annotations import Transaction, DataSheetColumns, Categories, CategorySummary
-from typing import cast, Mapping
+from typing import cast
+import calendar
 
+def makeStartDate():
+    today = datetime.now()
+    first_day = today.replace(day=1)
+    first_day_iso = first_day.date()
+    return first_day_iso
 
-START_DATE = date.fromisoformat("2026-05-01")
-END_DATE = date.fromisoformat("2026-05-30")
-
+def makeEndDate():
+    today = datetime.now()
+    _, last_day_num = calendar.monthrange(today.year, today.month)
+    last_day = today.replace(day=last_day_num)
+    last_day_iso = last_day.date()
+    return last_day_iso
+    
 DESCIPTION_TO_CATEGORY: dict[str, Categories] = {
     # Groceries
     'Costco': Categories.Groceries,
@@ -64,7 +74,7 @@ def getTransactionData()-> list[Transaction]:
 
 
 def withinDateRange(transaction: Transaction):
-    return START_DATE <= transaction["date"] <= END_DATE
+    return makeStartDate() <= transaction["date"] <= makeEndDate()
 
 def cleanTransactionData(data, ):
     return list(filter(withinDateRange, data))

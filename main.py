@@ -6,8 +6,8 @@ from get_and_process_data import getAndProcessData
 from write_to_sheets import writeToSheets
 
 # TO DO
-# handle negative numbers
 # handle creating a spreadsheet when none exists
+# auto get date range
 def main():
     data = getAndProcessData()
     writeToSheets(data)
