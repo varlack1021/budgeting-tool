@@ -3,26 +3,26 @@ from datetime import datetime, date
 import csv
 from type_annotations import Transaction, DataSheetColumns, Categories, CategorySummary
 from pprint import pprint
-from typing import cast
+from typing import cast, Mapping
 
 
 START_DATE = date.fromisoformat("2026-05-01")
 END_DATE = date.fromisoformat("2026-05-30")
 
-DESCIPTION_TO_CATEGORY = {
+DESCIPTION_TO_CATEGORY: dict[str, Categories] = {
     # Groceries
     'Costco': Categories.Groceries,
-    'STEWLEONARD': 'Groceries',
+    'STEWLEONARD': Categories.Groceries,
     #Miscellaneous
-    'Amazon': 'Miscellaneous',
-
+    'Amazon': Categories.Miscellaneous,
+    'COSTCO *ANNUAL RENEWAL': Categories.Miscellaneous,
     #Insurance
-    'USAA': 'Insurance',
+    'USAA': Categories.Insurance,
 
     #Subscriptions
-    'AAA MEMBERSHIP DUES': 'Subscriptions',
-    'CrunchyRoll': 'Subscriptions',
-    'Obsidian':'Subscriptions',
+    'AAA MEMBERSHIP DUES': Categories.Subscriptions,
+    'CrunchyRoll':  Categories.Subscriptions,
+    'Obsidian': Categories.Subscriptions,
     'Apple': Categories.Subscriptions,
 
     # Guilt Free
@@ -69,19 +69,17 @@ def withinDateRange(transaction: Transaction):
 def cleanTransactionData(data, ):
     return list(filter(withinDateRange, data))
 
-def groupByCategory(transactions: list[Transaction])-> dict[Categories, CategorySummary]:
-    transactionByCategory:dict[Categories.value, CategorySummary] = {category.value: {"transactions": [], "total": 0} for category in Categories}
-    all_categories = [category.value for category in Categories]
+def groupByCategory(transactions: list[Transaction])-> dict[str, CategorySummary]:
+    transactionByCategory:dict[str, CategorySummary] = {category.value: {"transactions": [], "total": 0} for category in Categories}
+    known_categories = [category.value for category in Categories]
 
     for transaction in transactions:
         category = transaction['category']
-        if category in all_categories:
+        if category in known_categories:
             summary = transactionByCategory[transaction['category']]
             summary['transactions'].append(transaction)
-            summary['total'] += float(transaction['amount'])
         else:
             transactionByCategory['GuiltFree']['transactions'].append(transaction)
-            transactionByCategory['GuiltFree']['total'] += float(transaction['amount'])
     return transactionByCategory
     
 
@@ -90,5 +88,5 @@ def getAndProcessData():
     cleanedData = cleanTransactionData(data)
     reCategorize(cleanedData)
     transactionByCategory = groupByCategory(cleanedData)
-
+    print(transactionByCategory)
     return transactionByCategory
