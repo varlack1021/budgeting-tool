@@ -49,7 +49,7 @@ class GoogleSheets:
                 "range": {
                     "sheetId": sheet_id,           
                     "startRowIndex": 0,    
-                    "endRowIndex": 30,    
+                    "endRowIndex": 50,    
                     "startColumnIndex": 0, 
                     "endColumnIndex":len(column_properties),
                 },
@@ -57,7 +57,6 @@ class GoogleSheets:
             }
         },
     },
-    
     {
         "repeatCell": {
             "range": {
@@ -78,18 +77,22 @@ class GoogleSheets:
     spreadsheetId=spreadsheet_id,
     body={'requests': requests}
 ).execute()
-
-    def auto_resize_columns(self, spreadsheet_id, sheet_id, end_index):
+    
+    def adjust_column_width(self, spreadsheet_id, sheet_id, colNumber, size):
         requests=[
-                {
-        "autoResizeDimensions": {
-            "dimensions": {
+              {
+        "updateDimensionProperties": {
+            "range": {
                 "sheetId": sheet_id,
                 "dimension": "COLUMNS",
-                "startIndex": 0,
-                "endIndex": end_index
-            }
-        },
+                "startIndex": colNumber,  # Starting at Column A
+                "endIndex": colNumber + 1     # Ending before Column B (so, just Column A)
+            },
+            "properties": {
+                "pixelSize": size
+            },
+            "fields": "pixelSize"
+        }
     }
         ]
         self.service.batchUpdate(

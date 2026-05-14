@@ -11,7 +11,7 @@ END_DATE = date.fromisoformat("2026-05-30")
 
 DESCIPTION_TO_CATEGORY = {
     # Groceries
-    'Costco': 'Groceries',
+    'Costco': Categories.Groceries,
     'STEWLEONARD': 'Groceries',
     #Miscellaneous
     'Amazon': 'Miscellaneous',
@@ -23,6 +23,13 @@ DESCIPTION_TO_CATEGORY = {
     'AAA MEMBERSHIP DUES': 'Subscriptions',
     'CrunchyRoll': 'Subscriptions',
     'Obsidian':'Subscriptions',
+    'Apple': Categories.Subscriptions,
+
+    # Guilt Free
+    'Teng and Sons': Categories.GuiltFree,
+
+    # Transportation
+    'Shell OIL': Categories.Transportation
 }
 
 def swap_leading_symbols(text: str) -> str:
