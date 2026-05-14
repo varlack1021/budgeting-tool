@@ -1,5 +1,5 @@
-from google_sheets_service import GoogleSheets
-from type_annotations import Categories, CategorySummary
+from google_sheets_service import GoogleSheets, SheetExistsError
+from type_annotations import CategorySummary
 from google_sheets_service import ColumnProperty
 
 SPREADSHEET_ID = "1CQqQ7XW-LuDEVAJ-NZkK6blGTefX8vmtL9Do6hXGg-w"
@@ -34,26 +34,31 @@ CATEGORY_SHEET_COLUMN_PROPERTIES: list[ColumnProperty] = [
     
                 ]
 
-def writeToSheets(data:dict[Categories, CategorySummary]):
-    sheetsService = GoogleSheets()
-    # spreadsheet = sheetsService.spreadsheets().get(spreadsheetId=SPREADSHEET_ID).execute()
+def create_formatted_sheet(sheetsService: GoogleSheets, column_properties, sheet_name, col_width):
+    try:
+        sheet_id=sheetsService.create_new_sheet(SPREADSHEET_ID, sheet_name)
+        sheetsService.add_table(SPREADSHEET_ID, sheet_id, column_properties, sheet_name)
+        sheetsService.adjust_column_width(SPREADSHEET_ID, sheet_id, 0, col_width)
+    except SheetExistsError:
+        pass
 
-    table_values: list[list[str | float]] = []
+
+def writeToSheets(data:dict[str, CategorySummary]):
+    sheetsService = GoogleSheets()
+    summary_table_values: list[list[str | float]] = []
 
     for categoryName in data:
-        table_values.append([
+        summary_table_values.append([
             categoryName,
             f"""=QUERY({categoryName}!A:C, "SELECT SUM(C) WHERE A != 'Total' LABEL SUM(C) ''")"""
         ])
     
     for i in range(2):
-        table_values.append([])
-    table_values.append(["Total Spend", "=SUM(B2:B7)"])
+        summary_table_values.append([])
+    summary_table_values.append(["Total Spend", "=SUM(B2:B7)"])
     
-
-    sheet_id=sheetsService.create_new_sheet(SPREADSHEET_ID, "Summary")
-    sheetsService.add_table(SPREADSHEET_ID, sheet_id, SUMMARY_SHEET_COLUMN_PROPERTIES, "Summary")
-    sheetsService.adjust_column_width(SPREADSHEET_ID, sheet_id, 0, 150)
+    # do this first to ensure the sheet is placed first in the sheet order
+    create_formatted_sheet(sheetsService, SUMMARY_SHEET_COLUMN_PROPERTIES, "Summary", 150)
 
     for categoryName, summary in data.items():
         table_values = [] 
@@ -66,12 +71,11 @@ def writeToSheets(data:dict[Categories, CategorySummary]):
         table_values.append([])
         table_values.append([TOTAL, "",SUM_FORMULA])
         
-        sheet_id = sheetsService.create_new_sheet(SPREADSHEET_ID, categoryName)
-        sheetsService.add_table(SPREADSHEET_ID, sheet_id, CATEGORY_SHEET_COLUMN_PROPERTIES, categoryName)
+        create_formatted_sheet(sheetsService, CATEGORY_SHEET_COLUMN_PROPERTIES, categoryName, 250)
         sheetsService.writeToSheet(SPREADSHEET_ID, categoryName, table_values)
-        sheetsService.adjust_column_width(SPREADSHEET_ID, sheet_id, 0, 250)
 
     # Do this last. Otherwise the REF's in the query will be null as they don't exist until all other sheets are created.
-    sheetsService.writeToSheet(SPREADSHEET_ID, "Summary", table_values)
+    print(summary_table_values)
+    sheetsService.writeToSheet(SPREADSHEET_ID, "Summary", summary_table_values)
 
     

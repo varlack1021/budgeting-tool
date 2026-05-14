@@ -19,7 +19,6 @@ class Transaction(TypedDict):
     
 class CategorySummary(TypedDict):
     transactions: list[Transaction]
-    total: float
 
 class DataSheetColumns(IntEnum):
     TRANSACTION_DATE=0

@@ -2,7 +2,6 @@
 from datetime import datetime, date
 import csv
 from type_annotations import Transaction, DataSheetColumns, Categories, CategorySummary
-from pprint import pprint
 from typing import cast, Mapping
 
 
@@ -70,7 +69,7 @@ def cleanTransactionData(data, ):
     return list(filter(withinDateRange, data))
 
 def groupByCategory(transactions: list[Transaction])-> dict[str, CategorySummary]:
-    transactionByCategory:dict[str, CategorySummary] = {category.value: {"transactions": [], "total": 0} for category in Categories}
+    transactionByCategory:dict[str, CategorySummary] = {category.value: {"transactions": []} for category in Categories}
     known_categories = [category.value for category in Categories]
 
     for transaction in transactions:
@@ -88,5 +87,4 @@ def getAndProcessData():
     cleanedData = cleanTransactionData(data)
     reCategorize(cleanedData)
     transactionByCategory = groupByCategory(cleanedData)
-    print(transactionByCategory)
     return transactionByCategory

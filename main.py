@@ -1,3 +1,6 @@
+import warnings
+warnings.filterwarnings("ignore", message=".*Python version 3.9.*")
+warnings.filterwarnings("ignore", message=".*non-supported Python version.*")
 from get_and_process_data import getAndProcessData
 from write_to_sheets import writeToSheets
 

@@ -1,6 +1,8 @@
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from typing import TypedDict
+from googleapiclient.errors import HttpError
+import json
 
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 SERVICE_ACCOUNT_FILE = "service_account.json"
@@ -8,6 +10,9 @@ SERVICE_ACCOUNT_FILE = "service_account.json"
 class ColumnProperty(TypedDict, total=False):
     columnName: str
     columnIndex: int
+
+class SheetExistsError(Exception):
+    pass
 
 class GoogleSheets:
     def __init__(self):
@@ -18,7 +23,7 @@ class GoogleSheets:
 
         self.service = build("sheets", "v4", credentials=creds).spreadsheets()
     
-    def create_new_sheet(self, sheet_id, sheet_name) -> str:
+    def create_new_sheet(self, spreadsheet_id, sheet_name) -> str:
         batch_update_request = {
             "requests": [
                 {
@@ -34,11 +39,33 @@ class GoogleSheets:
                 }
             ]
         }
-        result = self.service.batchUpdate(
-            spreadsheetId=sheet_id,
-            body=batch_update_request
-        ).execute()
-        return result['replies'][0]['addSheet']['properties']['sheetId']
+
+        try:
+            result = self.service.batchUpdate(
+                spreadsheetId=spreadsheet_id,
+                body=batch_update_request
+            ).execute()
+            return result['replies'][0]['addSheet']['properties']['sheetId']
+
+        except HttpError as error:
+        # 1. Parse the JSON bytes into a dictionary
+            error_data = json.loads(error.content.decode('utf-8'))
+            message = error_data.get('error', {}).get('message', 'No message found')
+            if ("Please enter another name" in message):
+                raise SheetExistsError
+            
+            raise error
+
+
+    def get_sheet_id_by_name(self, spreadsheet_id, sheet_name):
+        spreadsheet = self.service.spreadsheets().get(spreadsheetId=spreadsheet_id).execute()
+        sheets = spreadsheet.get('sheets', [])
+
+        for sheet in sheets:
+            properties = sheet.get('properties', {})
+            if properties.get('title') == sheet_name:
+                return properties.get('sheetId')
+        raise ValueError("sheet name could not be found")
 
     def add_table(self, spreadsheet_id, sheet_id, column_properties: list[ColumnProperty], table_name):
         requests = [
@@ -100,9 +127,9 @@ class GoogleSheets:
             body={'requests': requests}
             ).execute()
 
-    def writeToSheet(self, sheet_id, sheet_name, table_values):
+    def writeToSheet(self, spreadsheet_id, sheet_name, table_values):
         self.service.values().update(
-            spreadsheetId=sheet_id,
+            spreadsheetId=spreadsheet_id,
             range=f"{sheet_name}!A2",
             valueInputOption="USER_ENTERED",
             body={"values": table_values}
