@@ -1,6 +1,6 @@
 from google_sheets_service import GoogleSheets, SheetExistsError
-from type_annotations import CategorySummary
 from google_sheets_service import ColumnProperty
+from type_annotations import Transaction
 
 SPREADSHEET_ID = "1CQqQ7XW-LuDEVAJ-NZkK6blGTefX8vmtL9Do6hXGg-w"
 TOTAL='Total'
@@ -44,7 +44,7 @@ def create_formatted_sheet(sheetsService: GoogleSheets, column_properties, sheet
         pass
 
 
-def writeToSheets(data:dict[str, CategorySummary]):
+def writeToSheets(data:dict[str, list[Transaction]]):
     sheetsService = GoogleSheets()
     summary_table_values: list[list[str | float]] = []
 
@@ -64,7 +64,7 @@ def writeToSheets(data:dict[str, CategorySummary]):
     for categoryName, summary in data.items():
         table_values = [] 
         
-        for transaction in summary['transactions']:
+        for transaction in summary:
             amount = transaction['amount']
             date = transaction['date']
             description = transaction['description']

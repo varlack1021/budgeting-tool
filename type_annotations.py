@@ -16,9 +16,6 @@ class Transaction(TypedDict):
     category: Categories
     amount: str
     description: str
-    
-class CategorySummary(TypedDict):
-    transactions: list[Transaction]
 
 class DataSheetColumns(IntEnum):
     TRANSACTION_DATE=0

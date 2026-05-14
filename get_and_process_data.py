@@ -1,7 +1,7 @@
 
 from datetime import datetime, date
 import csv
-from type_annotations import Transaction, DataSheetColumns, Categories, CategorySummary
+from type_annotations import Transaction, DataSheetColumns, Categories
 from typing import cast
 import calendar
 
@@ -79,17 +79,16 @@ def withinDateRange(transaction: Transaction):
 def cleanTransactionData(data, ):
     return list(filter(withinDateRange, data))
 
-def groupByCategory(transactions: list[Transaction])-> dict[str, CategorySummary]:
-    transactionByCategory:dict[str, CategorySummary] = {category.value: {"transactions": []} for category in Categories}
+def groupByCategory(transactions: list[Transaction])-> dict[str, list[Transaction]]:
+    transactionByCategory:dict[str, list[Transaction]] = {category.value: [] for category in Categories}
     known_categories = [category.value for category in Categories]
 
     for transaction in transactions:
         category = transaction['category']
         if category in known_categories:
-            summary = transactionByCategory[transaction['category']]
-            summary['transactions'].append(transaction)
+            transactionByCategory[transaction['category']].append(transaction)
         else:
-            transactionByCategory['GuiltFree']['transactions'].append(transaction)
+            transactionByCategory[Categories.GuiltFree.value].append(transaction)
     return transactionByCategory
     
 
