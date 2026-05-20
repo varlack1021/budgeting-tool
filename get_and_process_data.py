@@ -34,6 +34,7 @@ DESCIPTION_TO_CATEGORY: dict[str, Categories] = {
     'Obsidian': Categories.Subscriptions,
     'Apple': Categories.Subscriptions,
     'Spotify': Categories.Subscriptions,
+    'COSTCO *Annual Renewal': Categories.Subscriptions,
 
     # Guilt Free
     'Teng and Sons': Categories.GuiltFree,
