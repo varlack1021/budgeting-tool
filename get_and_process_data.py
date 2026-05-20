@@ -33,6 +33,7 @@ DESCIPTION_TO_CATEGORY: dict[str, Categories] = {
     'CrunchyRoll':  Categories.Subscriptions,
     'Obsidian': Categories.Subscriptions,
     'Apple': Categories.Subscriptions,
+    'Spotify': Categories.Subscriptions,
 
     # Guilt Free
     'Teng and Sons': Categories.GuiltFree,
