@@ -2,6 +2,7 @@
 from datetime import datetime, date
 import csv
 from type_annotations import Transaction, DataSheetColumns, Categories
+from rules import TRANSACTION_DESCIPTION_TO_CATEGORY
 from typing import cast
 import calendar
 
@@ -17,31 +18,6 @@ def makeEndDate():
     last_day = today.replace(day=last_day_num)
     last_day_iso = last_day.date()
     return last_day_iso
-    
-DESCIPTION_TO_CATEGORY: dict[str, Categories] = {
-    # Groceries
-    'Costco': Categories.Groceries,
-    'STEWLEONARD': Categories.Groceries,
-    #Miscellaneous
-    'Amazon': Categories.Miscellaneous,
-    'COSTCO *ANNUAL RENEWAL': Categories.Miscellaneous,
-    #Insurance
-    'USAA': Categories.Insurance,
-
-    #Subscriptions
-    'AAA MEMBERSHIP DUES': Categories.Subscriptions,
-    'CrunchyRoll':  Categories.Subscriptions,
-    'Obsidian': Categories.Subscriptions,
-    'Apple': Categories.Subscriptions,
-    'Spotify': Categories.Subscriptions,
-    'COSTCO *Annual Renewal': Categories.Subscriptions,
-
-    # Guilt Free
-    'Teng and Sons': Categories.GuiltFree,
-
-    # Transportation
-    'Shell OIL': Categories.Transportation
-}
 
 def swap_leading_symbols(text: str) -> str:
     """Swaps a leading '-' with '+' and a leading '+' with '-'"""
@@ -53,11 +29,11 @@ def swap_leading_symbols(text: str) -> str:
         return "-" + text
 
 def reCategorize(transactions:list[Transaction]):
-    targets = (DESCIPTION_TO_CATEGORY).keys()
+    targets = (TRANSACTION_DESCIPTION_TO_CATEGORY).keys()
     for transaction in transactions:
         for target in targets:
             if target.lower() in transaction["description"].lower():
-                transaction['category'] = DESCIPTION_TO_CATEGORY[target]
+                transaction['category'] = TRANSACTION_DESCIPTION_TO_CATEGORY[target]
 
 def getTransactionData()-> list[Transaction]:
     data: list[Transaction] = []
