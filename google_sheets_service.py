@@ -6,6 +6,7 @@ import json
 
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 SERVICE_ACCOUNT_FILE = "service_account.json"
+BUDGETING_FOLDER_ID='1XPKQecIqtb3zxkc7bPQN3GZtlMNSPN1R?'
 
 class ColumnProperty(TypedDict, total=False):
     columnName: str
@@ -22,6 +23,7 @@ class GoogleSheets:
         )
 
         self.service = build("sheets", "v4", credentials=creds).spreadsheets()
+    
     def clearSheets(self, spreadsheet_id, sheets: list[str]):
         tabs_to_reset = sheets
 
@@ -33,6 +35,7 @@ class GoogleSheets:
             spreadsheetId=spreadsheet_id,
             body=request_body
         ).execute()
+
     def create_new_sheet(self, spreadsheet_id, sheet_name) -> str:
         batch_update_request = {
             "requests": [
