@@ -22,5 +22,8 @@ TRANSACTION_DESCIPTION_TO_CATEGORY: dict[str, Categories] = {
     'Teng and Sons': Categories.GuiltFree,
 
     # Transportation
-    'Shell OIL': Categories.Transportation
+    'Shell OIL': Categories.Transportation,
+
+    #Phone
+    'TMOBILE': Categories.Phone
 }

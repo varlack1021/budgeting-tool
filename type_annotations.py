@@ -8,6 +8,7 @@ class Categories(str, Enum):
     GuiltFree='GuiltFree'
     Insurance='Insurance' # US AAA
     Miscellaneous='Miscellaneous'# Amazon
+    Phone='Phone'
     Subscriptions='Subscriptions' #Crunchyroll, Spotify, icloud, triple A, costco membership dues, obsidian
     Transportation='Transportation'
 
