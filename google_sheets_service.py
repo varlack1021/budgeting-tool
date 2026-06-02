@@ -90,7 +90,7 @@ class GoogleSheets:
                 "range": {
                     "sheetId": sheet_id,           
                     "startRowIndex": 0,    
-                    "endRowIndex": 50,    
+                    "endRowIndex": 70,    
                     "startColumnIndex": 0, 
                     "endColumnIndex":len(column_properties),
                 },
