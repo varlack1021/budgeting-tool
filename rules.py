@@ -27,3 +27,7 @@ TRANSACTION_DESCIPTION_TO_CATEGORY: dict[str, Categories] = {
     #Phone
     'TMOBILE': Categories.Phone
 }
+
+TRANSACTIONS_TO_IGNORE = [
+    "PAYMENT THANK YOU"
+]

@@ -2,9 +2,15 @@
 from datetime import datetime, date
 import csv
 from type_annotations import Transaction, DataSheetColumns, Categories
-from rules import TRANSACTION_DESCIPTION_TO_CATEGORY
+from rules import TRANSACTION_DESCIPTION_TO_CATEGORY, TRANSACTIONS_TO_IGNORE
 from typing import cast
 import calendar
+
+def isIgnoredTransaction(transaction: str)-> bool:
+    for item in TRANSACTIONS_TO_IGNORE:
+        if (item.lower() in transaction.lower()):
+            return True
+    return False
 
 def makeStartDate():
     today = datetime.now()
@@ -41,9 +47,12 @@ def getTransactionData()-> list[Transaction]:
         reader = csv.reader(csvfile)
         next(reader)
         for row in reader:
+            description = row[DataSheetColumns.DESCRIPTION]
+            if (isIgnoredTransaction(description)):
+                continue
             transaction: Transaction = {
                 "date": datetime.strptime(row[DataSheetColumns.TRANSACTION_DATE], "%m/%d/%Y").date(),
-                "description": row[DataSheetColumns.DESCRIPTION],
+                "description": description,
                 "amount": swap_leading_symbols(row[DataSheetColumns.AMOUNT]),
                 "category": cast(Categories, row[DataSheetColumns.CATEGORY],)
             }
