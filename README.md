@@ -36,3 +36,6 @@ The script expects the dataset to be configured as follows
  ```
 
  To add an override rule, update `rules.py` with the string to match the transaction with and the desired Category.
+
+ ## For Wife
+ To run script open a terminal and type `hubby-wuvs-u`
