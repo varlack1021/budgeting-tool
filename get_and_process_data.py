@@ -59,13 +59,6 @@ def getTransactionData()-> list[Transaction]:
             data.append(transaction)
     return data
 
-
-def withinDateRange(transaction: Transaction):
-    return makeStartDate() <= transaction["date"] <= makeEndDate()
-
-def cleanTransactionData(data, ):
-    return list(filter(withinDateRange, data))
-
 def groupByCategory(transactions: list[Transaction])-> dict[str, list[Transaction]]:
     transactionByCategory:dict[str, list[Transaction]] = {category.value: [] for category in Categories}
     known_categories = [category.value for category in Categories]
@@ -81,7 +74,6 @@ def groupByCategory(transactions: list[Transaction])-> dict[str, list[Transactio
 
 def getAndProcessData():
     data = getTransactionData()
-    cleanedData = cleanTransactionData(data)
-    reCategorize(cleanedData)
-    transactionByCategory = groupByCategory(cleanedData)
+    reCategorize(data)
+    transactionByCategory = groupByCategory(data)
     return transactionByCategory
