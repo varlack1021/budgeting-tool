@@ -4,6 +4,7 @@ from datetime import date
 from enum import Enum
 
 class Categories(str, Enum):
+    Comics='Comics'
     Groceries='Groceries' # Costco, stew, stop & shop, whole foods
     GuiltFree='GuiltFree'
     Insurance='Insurance' # US AAA

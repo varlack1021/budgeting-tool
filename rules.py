@@ -1,6 +1,8 @@
 from type_annotations import Categories
 
 TRANSACTION_DESCIPTION_TO_CATEGORY: dict[str, Categories] = {
+    # Comics
+    'COOL KIDS COMICS': Categories.Comics,
     # Groceries
     'Costco': Categories.Groceries,
     'STEWLEONARD': Categories.Groceries,
