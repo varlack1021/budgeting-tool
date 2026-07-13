@@ -19,6 +19,7 @@ TRANSACTION_DESCIPTION_TO_CATEGORY: dict[str, Categories] = {
     'Apple': Categories.Subscriptions,
     'Spotify': Categories.Subscriptions,
     'COSTCO *Annual Renewal': Categories.Subscriptions,
+    'METROPOLITAN DENTAL ARTS': Categories.Subscriptions,
 
     # Guilt Free
     'Teng and Sons': Categories.GuiltFree,
