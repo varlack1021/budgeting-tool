@@ -36,13 +36,14 @@ class GoogleSheets:
             body=request_body
         ).execute()
 
-    def create_new_sheet(self, spreadsheet_id, sheet_name) -> str:
+    def create_new_sheet(self, spreadsheet_id, sheet_name, index) -> str:
         batch_update_request = {
             "requests": [
                 {
                     "addSheet": {
                         "properties": {
                             "title": sheet_name,
+                            "index": index,
                             "gridProperties": {
                                 "rowCount": 100,  
                                 "columnCount": 20     

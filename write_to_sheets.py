@@ -52,9 +52,9 @@ CATEGORY_BUDGETS: dict[str, int] = {
     Categories.Transportation: 200
 }
 
-def create_formatted_sheet(sheetsService: GoogleSheets, spread_sheet_id: str, column_properties, sheet_name, col_width):
+def create_formatted_sheet(sheetsService: GoogleSheets, spread_sheet_id: str, column_properties, sheet_name, col_width, index):
     try:
-        sheet_id=sheetsService.create_new_sheet(spread_sheet_id, sheet_name)
+        sheet_id=sheetsService.create_new_sheet(spread_sheet_id, sheet_name, index)
         sheetsService.add_table(spread_sheet_id, sheet_id, column_properties, sheet_name)
         sheetsService.adjust_column_width(spread_sheet_id, sheet_id, 0, col_width)
     except SheetExistsError:
@@ -66,7 +66,7 @@ def writeToSheets(sheetsService: GoogleSheets, data:dict[str, list[Transaction]]
     summary_table_values: list[list[str | float]] = []
     
     # do this first to ensure the sheet is placed first in the sheet order
-    create_formatted_sheet(sheetsService, spread_sheet_id, SUMMARY_SHEET_COLUMN_PROPERTIES, "Summary", 150)
+    create_formatted_sheet(sheetsService, spread_sheet_id, SUMMARY_SHEET_COLUMN_PROPERTIES, "Summary", 150, 0)
     # Create Category Sheets
     for categoryName, summary in data.items():
         table_values = [] 
@@ -79,9 +79,8 @@ def writeToSheets(sheetsService: GoogleSheets, data:dict[str, list[Transaction]]
         table_values.append([])
         table_values.append([TOTAL, "",SUM_FORMULA])
         
-        create_formatted_sheet(sheetsService, spread_sheet_id, CATEGORY_SHEET_COLUMN_PROPERTIES, categoryName, 250)
+        create_formatted_sheet(sheetsService, spread_sheet_id, CATEGORY_SHEET_COLUMN_PROPERTIES, categoryName, 250, 1)
         sheetsService.writeToSheet(spread_sheet_id, categoryName, table_values)
-
     # Create Summary Sheet
     # Do this last. Otherwise the REF's in the query will be null as they don't exist until all other sheets are created.
     for categoryName in data:
@@ -95,7 +94,8 @@ def writeToSheets(sheetsService: GoogleSheets, data:dict[str, list[Transaction]]
     
     for i in range(2):
         summary_table_values.append([])
-    summary_table_values.append(["Total Spend", "=SUM(B2:B7)"])
+    totalSpent = sum(CATEGORY_BUDGETS.values())
+    summary_table_values.append(["Totals", "=SUM(B2:B7)", totalSpent, f"""={totalSpent}-SUM(B2:B7)""" ])
     sheetsService.writeToSheet(spread_sheet_id, "Summary", summary_table_values)
 
     
