@@ -5,6 +5,8 @@ from type_annotations import Transaction, DataSheetColumns, Categories
 from rules import TRANSACTION_DESCIPTION_TO_CATEGORY, TRANSACTIONS_TO_IGNORE
 from typing import cast
 import calendar
+import os
+from pathlib import Path
 
 def isIgnoredTransaction(transaction: str)-> bool:
     for item in TRANSACTIONS_TO_IGNORE:
@@ -41,9 +43,9 @@ def reCategorize(transactions:list[Transaction]):
             if target.lower() in transaction["description"].lower():
                 transaction['category'] = TRANSACTION_DESCIPTION_TO_CATEGORY[target]
 
-def getTransactionData()-> list[Transaction]:
+def getTransactionData(filePath)-> list[Transaction]:
     data: list[Transaction] = []
-    with open('data.csv', newline='') as csvfile:
+    with open(filePath, newline='') as csvfile:
         reader = csv.reader(csvfile)
         next(reader)
         for row in reader:
@@ -72,8 +74,31 @@ def groupByCategory(transactions: list[Transaction])-> dict[str, list[Transactio
     return transactionByCategory
     
 
+def getFilePath():
+# Automatically locates your system Downloads directory
+    downloads_path = Path.home() / "Downloads"
+
+    # Find all CSV files that start with 'Chase' (case-insensitive search)
+    chase_files = []
+
+    for f in downloads_path.glob("*.CSV"):
+        if f.name.lower().startswith("chase"):
+            chase_files.append(f)
+    
+
+    if not chase_files:
+        print("No Chase CSV files found in Downloads.")
+        return None
+
+    # Get the file with the most recent modification time
+    latest_file = max(chase_files, key=lambda f: f.stat().st_mtime)
+
+    return latest_file
+
 def getAndProcessData():
-    data = getTransactionData()
+    filePath = getFilePath()
+    print(filePath)
+    data = getTransactionData(filePath)
     reCategorize(data)
     transactionByCategory = groupByCategory(data)
     return transactionByCategory
