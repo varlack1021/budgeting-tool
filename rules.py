@@ -29,6 +29,7 @@ TRANSACTION_DESCIPTION_TO_CATEGORY: dict[str, Categories] = {
     'MTA*LIRR ETIX TICKET': Categories.Transportation,
     'E-Z*PASSNY REBILL': Categories.Transportation,
     'NYCDOT PARKNYC': Categories.Transportation,
+    'Petroleum': Categories.Transportation,
 
     #Phone
     'TMOBILE': Categories.Phone
