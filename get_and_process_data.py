@@ -84,7 +84,6 @@ def getFilePath():
 
 def getAndProcessData():
     filePath = getFilePath()
-    print(filePath)
     data = getTransactionData(filePath)
     reCategorize(data)
     transactionByCategory = groupByCategory(data)
