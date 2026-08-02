@@ -14,19 +14,6 @@ def isIgnoredTransaction(transaction: str)-> bool:
             return True
     return False
 
-def makeStartDate():
-    today = datetime.now()
-    first_day = today.replace(day=1)
-    first_day_iso = first_day.date()
-    return first_day_iso
-
-def makeEndDate():
-    today = datetime.now()
-    _, last_day_num = calendar.monthrange(today.year, today.month)
-    last_day = today.replace(day=last_day_num)
-    last_day_iso = last_day.date()
-    return last_day_iso
-
 def swap_leading_symbols(text: str) -> str:
     """Swaps a leading '-' with '+' and a leading '+' with '-'"""
     if text[0] == "-":
