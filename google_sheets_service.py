@@ -165,7 +165,7 @@ class GoogleSheets:
     def writeToSheet(self, spreadsheet_id, sheet_name, table_values):
         self.service.values().update(
             spreadsheetId=spreadsheet_id,
-            range=f"{sheet_name}!A2",
+            range=f"{sheet_name}!A1",
             valueInputOption="USER_ENTERED",
             body={"values": table_values}
         ).execute()

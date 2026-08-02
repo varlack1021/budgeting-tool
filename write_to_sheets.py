@@ -41,6 +41,9 @@ CATEGORY_SHEET_COLUMN_PROPERTIES: list[ColumnProperty] = [
     
                 ]
 
+SUMMARY_SHEET_TABLE_HEADERS = ["Category", "Spent", "Budgeted", "Remaining"]
+CATEGROY_TABLE_HEADERS = ["Category", "Date", "Amount"]
+
 CATEGORY_BUDGETS: dict[str, int] = {
     Categories.Comics: 100,
     Categories.Groceries: 800,
@@ -63,13 +66,13 @@ def create_formatted_sheet(sheetsService: GoogleSheets, spread_sheet_id: str, co
 
 
 def writeToSheets(sheetsService: GoogleSheets, data:dict[str, list[Transaction]], spread_sheet_id):
-    summary_table_values: list[list[str | float]] = []
+    summary_table_values: list[list[str | float]] = [SUMMARY_SHEET_TABLE_HEADERS]
     
     # do this first to ensure the sheet is placed first in the sheet order
     create_formatted_sheet(sheetsService, spread_sheet_id, SUMMARY_SHEET_COLUMN_PROPERTIES, "Summary", 150, 0)
     # Create Category Sheets
     for categoryName, summary in data.items():
-        table_values = [] 
+        table_values = [CATEGROY_TABLE_HEADERS] 
         
         for transaction in summary:
             amount = transaction['amount']
